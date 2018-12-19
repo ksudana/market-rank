@@ -1,2 +1,2 @@
-# market-rank
-Web application that scrapes analysis data from Yahoo finance and filters &amp; orders stocks based on a set of specified metrics
+# MarketAnalysisDataScraper
+Web application that supports querying and visualization of market analysis data scraped from Yahoo Finance.
