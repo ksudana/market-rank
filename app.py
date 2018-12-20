@@ -1,11 +1,14 @@
 from flask import Flask, render_template, request
-from flask_sqlalchemy import SQLAlchemy
-import models
-from config import Config
+from flask.ext.sqlalchemy import SQLAlchemy
+from flask.ext.heroku import Heroku
+
+#from config import Config
 
 app = Flask(__name__)
-app.config.from_object(Config)
+#app.config.from_object(Config)
+heroku = Heroku(app)
 db = SQLAlchemy(app)
+
 
 data = []
 
@@ -17,6 +20,7 @@ def home():
 
 @app.route("/", methods=["POST"])
 def main():
+    from models import StockData
     global data
     filters = "mean_price_target_diff IS NOT NULL"
     if request.form:
@@ -25,7 +29,7 @@ def main():
         if price_value != '':
             filters += " AND price " + price_filter + " " + price_value
 
-    data = models.StockData.query.filter(filters)
+    data = StockData.query.filter(filters)
     return render_template("index.html", stockdata=data)
 
 

@@ -68,19 +68,18 @@ def get_market_data():
         cr = csv.reader(decoded_content.splitlines(), delimiter=',')
         company_list = list(cr)
         for row in company_list[1:]:
-            sym = row[0]
+            sym = row[0].strip()
             stock_metadata = StockMD.query.filter_by(symbol=sym).first()
-            if stock_metadata is None:
-                name = row[1]
-                sector = row[6]
-                metadata_entry = StockMD(symbol=sym,
-                                         name=name,
-                                         sector=sector)
-
-                db.session.add(metadata_entry)
-
             if row[6] == 'Technology':
-                sym = row[0]
+                if stock_metadata is None:
+                    name = row[1].strip()
+                    sector = row[6].strip()
+                    metadata_entry = StockMD(symbol=sym,
+                                             name=name,
+                                             sector=sector)
+
+                    db.session.add(metadata_entry)
+
                 scrape(sym)
 
     db.session.commit()
