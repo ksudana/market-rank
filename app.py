@@ -1,8 +1,8 @@
 from flask import Flask, render_template, request
-from flask.ext.sqlalchemy import SQLAlchemy
-from flask.ext.heroku import Heroku
+from flask_sqlalchemy import SQLAlchemy
+from flask_heroku import Heroku
 
-#from config import Config
+from config import Config
 
 app = Flask(__name__)
 #app.config.from_object(Config)
