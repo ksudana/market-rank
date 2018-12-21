@@ -22,92 +22,98 @@
             $(document).ready(function() {
                 $('#data-table').DataTable({
                     "order": [[ 4, "desc" ]],
-                     "initComplete": function( settings, json ) {
+                    "initComplete": function( settings, json ) {
                         document.getElementById("data-table").style.visibility = "visible";
-                     }
+                    }
                 });
             });
         </script>
     </head>
-    <body width="80%">
-        <h1>MarketRank</h1>
-        <form method="POST" action="/">
-            Price:
-            $ <input type="number" name="price-min">  -  $ <input type="number" name="price-max">
-            <br>
-            Minimum # of Analysts:
-            <input type="number" name="n-min">
-            <br>
-            Sector:
-            <select name="sector">
-                <option value="All">All</option>
-                <option value="Basic Industries">Basic Industries</option>
-                <option value="Capital Goods">Capital Goods</option>
-                <option value="Consumer Durables">Consumer Durables</option>
-                <option value="Consumer Non-Durables">Consumer Non-Durables</option>
-                <option value="Consumer Services">Consumer Services</option>
-                <option value="Energy">Energy</option>
-                <option value="Finance">Finance</option>
-                <option value="Health Care">Health Care</option>
-                <option value="Miscellaneous">Miscellaneous</option>
-                <option value="Public Utilities">Public Utilities</option>
-                <option value="Technology">Technology</option>
-                <option value="Transportation">Transportation</option>
-            </select>
-            <br><br>
-            <input type="submit" value="Search">
-        </form>
+    <body width="80%" class="container-fluid">
+        <div class="page-header">
+            <h1>MarketRank</h1>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <form method="POST" action="/">
+                Price:
+                $ <input type="number" name="price-min">  -  $ <input type="number" name="price-max">
+                <br><br>
+                Minimum # of Analysts:
+                <input type="number" name="n-min">
+                <br><br>
+                Sector:
+                <select name="sector">
+                    <option value="All">All</option>
+                    <option value="Basic Industries">Basic Industries</option>
+                    <option value="Capital Goods">Capital Goods</option>
+                    <option value="Consumer Durables">Consumer Durables</option>
+                    <option value="Consumer Non-Durables">Consumer Non-Durables</option>
+                    <option value="Consumer Services">Consumer Services</option>
+                    <option value="Energy">Energy</option>
+                    <option value="Finance">Finance</option>
+                    <option value="Health Care">Health Care</option>
+                    <option value="Miscellaneous">Miscellaneous</option>
+                    <option value="Public Utilities">Public Utilities</option>
+                    <option value="Technology">Technology</option>
+                    <option value="Transportation">Transportation</option>
+                </select>
+                <br><br>
+                <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        </div>
         <h3>Results:</h3>
-        <table id="data-table" class="stripe dataTable" style="visibility:hidden">
-            <thead>
+        <table id="data-table" class="table table-striped w-auto" style="visibility:hidden">
+                <thead>
+                    <tr>
+                        <th>SYM</th>
+                        <th>Name</th>
+                        <th>Sector</th>
+                        <th>Price</th>
+                        <th>Mean Projection (1Y)</th>
+                        <th>Mean Analyst Rating</th>
+                        <th># of Analysts</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for stock, metadata in stockdata %}
                 <tr>
-                    <th>SYM</th>
-                    <th>Name</th>
-                    <th>Sector</th>
-                    <th>Price</th>
-                    <th>Mean Projection (1Y)</th>
-                    <th>Mean Analyst Rating</th>
-                    <th># of Analysts</th>
+                    <td><a href="https://finance.yahoo.com/quote/{{stock.symbol}}?p={{stock.symbol}}" target="_blank">{{stock.symbol}}</a></td>
+                    <td>{{metadata.name}}</td>
+                    <td>{{metadata.sector}}</td>
+                    <td>{{stock.price}}</td>
+                    <td>
+                        <script>
+                            var raw = {{stock.mean_price_target_diff}}
+                            var value = numeral(raw).format('0.000%');
+                            if(raw > 0)
+                                document.write("+");
+
+                            document.write(value)
+                        </script>
+                    </td>
+                    <td>
+                        <script>
+                            var raw = {{stock.mean_analyst_rating}}
+                            document.write(raw)
+
+                            if(raw <= 1)
+                                document.write(" (Strong Buy)");
+                            else if(raw <= 2)
+                                document.write(" (Buy)");
+                            else if(raw <= 3)
+                                document.write(" (Hold)");
+                            else if(raw <= 4)
+                                document.write(" (Sell)");
+                            else
+                                document.write(" (Strong Sell)");
+                        </script>
+                    </td>
+                    <td>{{stock.n}}</td>
                 </tr>
-            </thead>
-            <tbody>
-            {% for stock, metadata in stockdata %}
-            <tr>
-                <td><a href="https://finance.yahoo.com/quote/{{stock.symbol}}?p={{stock.symbol}}" target="_blank">{{stock.symbol}}</a></td>
-                <td>{{metadata.name}}</td>
-                <td>{{metadata.sector}}</td>
-                <td>{{stock.price}}</td>
-                <td>
-                    <script>
-                        var raw = {{stock.mean_price_target_diff}}
-                        var value = numeral(raw).format('0.000%');
-                        if(raw > 0)
-                            document.write("+");
-
-                        document.write(value)
-                    </script>
-                </td>
-                <td>
-                    <script>
-                        var raw = {{stock.mean_analyst_rating}}
-                        document.write(raw)
-
-                        if(raw <= 1)
-                            document.write(" (Strong Buy)");
-                        else if(raw <= 2)
-                            document.write(" (Buy)");
-                        else if(raw <= 3)
-                            document.write(" (Hold)");
-                        else if(raw <= 4)
-                            document.write(" (Sell)");
-                        else
-                            document.write(" (Strong Sell)");
-                    </script>
-                </td>
-                <td>{{stock.n}}</td>
-            </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+                {% endfor %}
+                </tbody>
+            </table>
     </body>
 </html>
