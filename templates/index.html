@@ -19,7 +19,9 @@
 
         <script>
             $(document).ready(function() {
-                $('#data-table').DataTable();
+                $('#data-table').DataTable({
+                    "order": [[ 2, "desc" ]]
+                });
             });
         </script>
     </head>
@@ -48,7 +50,7 @@
             <tbody>
             {% for stock in stockdata %}
             <tr>
-                <td><a href="https://finance.yahoo.com/quote/{{stock.symbol}}/analysis?p={{stock.symbol}}">{{stock.symbol}}</a></td>
+                <td><a href="https://finance.yahoo.com/quote/{{stock.symbol}}?p={{stock.symbol}}" target="_blank">{{stock.symbol}}</a></td>
                 <td>{{stock.price}}</td>
                 <td>
                     <script>
