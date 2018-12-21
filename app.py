@@ -30,6 +30,7 @@ def main():
         price_min = request.form.get("price-min")
         price_max = request.form.get("price-max")
         n_min = request.form.get("n-min")
+        sector = request.form.get("sector")
 
         if price_min != '':
             filters += " AND price >= {}".format(price_min)
@@ -39,6 +40,9 @@ def main():
 
         if n_min != '':
             filters += " AND n >= {}".format(n_min)
+
+        if sector != 'All':
+            filters += " AND sector = \'{}\'".format(sector)
 
     data = db.session.query(StockData, StockMD).filter(StockData.symbol == StockMD.symbol).filter(filters)
     return render_template("index.html", stockdata=data)

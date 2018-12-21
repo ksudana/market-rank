@@ -21,7 +21,10 @@
         <script>
             $(document).ready(function() {
                 $('#data-table').DataTable({
-                    "order": [[ 4, "desc" ]]
+                    "order": [[ 4, "desc" ]],
+                     "initComplete": function( settings, json ) {
+                        document.getElementById("data-table").style.visibility = "visible";
+                     }
                 });
             });
         </script>
@@ -34,11 +37,28 @@
             <br>
             Minimum # of Analysts:
             <input type="number" name="n-min">
+            <br>
+            Sector:
+            <select name="sector">
+                <option value="All">All</option>
+                <option value="Basic Industries">Basic Industries</option>
+                <option value="Capital Goods">Capital Goods</option>
+                <option value="Consumer Durables">Consumer Durables</option>
+                <option value="Consumer Non-Durables">Consumer Non-Durables</option>
+                <option value="Consumer Services">Consumer Services</option>
+                <option value="Energy">Energy</option>
+                <option value="Finance">Finance</option>
+                <option value="Health Care">Health Care</option>
+                <option value="Miscellaneous">Miscellaneous</option>
+                <option value="Public Utilities">Public Utilities</option>
+                <option value="Technology">Technology</option>
+                <option value="Transportation">Transportation</option>
+            </select>
             <br><br>
             <input type="submit" value="Search">
         </form>
         <h3>Results:</h3>
-        <table id="data-table" class="stripe dataTable">
+        <table id="data-table" class="stripe dataTable" style="visibility:hidden">
             <thead>
                 <tr>
                     <th>SYM</th>
