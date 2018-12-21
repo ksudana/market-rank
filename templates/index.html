@@ -14,6 +14,9 @@
         <!-- Latest compiled JavaScript -->
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
+        <!-- Numeral library -->
+        <script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>
+
         <script>
             $(document).ready(function() {
                 $('#data-table').DataTable();
@@ -24,12 +27,10 @@
         <h1>MarketRank</h1>
         <form method="POST" action="/">
             Price:
-            <select name="price-filter">
-                <option value="<"> < </option>
-                <option value=">"> > </option>
-            </select>
-            $ <input type="number" name="price-value">
+            $ <input type="number" name="price-min">  -  $ <input type="number" name="price-max">
             <br>
+            Minimum # of Analysts:
+            <input type="number" name="n-min">
             <br><br>
             <input type="submit" value="Search">
         </form>
@@ -40,6 +41,7 @@
                     <th>SYM</th>
                     <th>Price</th>
                     <th>Mean Projection (1Y)</th>
+                    <th>Mean Analyst Rating</th>
                     <th># of Analysts</th>
                 </tr>
             </thead>
@@ -48,7 +50,33 @@
             <tr>
                 <td><a href="https://finance.yahoo.com/quote/{{stock.symbol}}/analysis?p={{stock.symbol}}">{{stock.symbol}}</a></td>
                 <td>{{stock.price}}</td>
-                <td>{{stock.mean_price_target_diff}}</td>
+                <td>
+                    <script>
+                        var raw = {{stock.mean_price_target_diff}}
+                        var value = numeral(raw).format('0.000%');
+                        if(raw > 0)
+                            document.write("+");
+
+                        document.write(value)
+                    </script>
+                </td>
+                <td>
+                    <script>
+                        var raw = {{stock.mean_analyst_rating}}
+                        document.write(raw)
+
+                        if(raw <= 1)
+                            document.write(" (Strong Buy)");
+                        else if(raw <= 2)
+                            document.write(" (Buy)");
+                        else if(raw <= 3)
+                            document.write(" (Hold)");
+                        else if(raw <= 4)
+                            document.write(" (Sell)");
+                        else
+                            document.write(" (Strong Sell)");
+                    </script>
+                </td>
                 <td>{{stock.n}}</td>
             </tr>
             {% endfor %}

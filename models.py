@@ -7,7 +7,7 @@ class StockData(db.Model):
     symbol = db.Column(db.String(6), unique=True, nullable=False, primary_key=True)
     price = db.Column(db.Float)
     mean_price_target_diff = db.Column(db.Float, nullable=True)
-    mean_analyst_rating = db.Column(db.Integer, nullable=True)
+    mean_analyst_rating = db.Column(db.Float, nullable=True)
     n = db.Column(db.Integer)
 
     def __repr__(self):

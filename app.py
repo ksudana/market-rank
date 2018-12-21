@@ -1,15 +1,18 @@
 from flask import Flask, render_template, request
 from flask_sqlalchemy import SQLAlchemy
-from flask_heroku import Heroku
 
-from config import Config
 
 app = Flask(__name__)
-#app.config.from_object(Config)
+
+# local dev config:
+# from config import Config
+# app.config.from_object(Config)
+
+# heroku config:
+from flask_heroku import Heroku
 heroku = Heroku(app)
+
 db = SQLAlchemy(app)
-
-
 data = []
 
 
@@ -24,10 +27,18 @@ def main():
     global data
     filters = "mean_price_target_diff IS NOT NULL"
     if request.form:
-        price_filter = request.form.get("price-filter")
-        price_value = request.form.get("price-value")
-        if price_value != '':
-            filters += " AND price " + price_filter + " " + price_value
+        price_min = request.form.get("price-min")
+        price_max = request.form.get("price-max")
+        n_min = request.form.get("n-min")
+
+        if price_min != '':
+            filters += " AND price >= {}".format(price_min)
+
+        if price_max != '':
+            filters += " AND price <= {}".format(price_max)
+
+        if n_min != '':
+            filters += " AND n >= {}".format(n_min)
 
     data = StockData.query.filter(filters)
     return render_template("index.html", stockdata=data)
