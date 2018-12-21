@@ -70,17 +70,16 @@ def get_market_data():
         for row in company_list[1:]:
             sym = row[0].strip()
             stock_metadata = StockMD.query.filter_by(symbol=sym).first()
-            if row[6] == 'Technology':
-                if stock_metadata is None:
-                    name = row[1].strip()
-                    sector = row[6].strip()
-                    metadata_entry = StockMD(symbol=sym,
-                                             name=name,
-                                             sector=sector)
+            if stock_metadata is None:
+                name = row[1].strip()
+                sector = row[6].strip()
+                metadata_entry = StockMD(symbol=sym,
+                                         name=name,
+                                         sector=sector)
 
-                    db.session.add(metadata_entry)
+                db.session.add(metadata_entry)
 
-                scrape(sym)
+            scrape(sym)
 
     db.session.commit()
     print("Market data updated.")

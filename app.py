@@ -23,7 +23,7 @@ def home():
 
 @app.route("/", methods=["POST"])
 def main():
-    from models import StockData
+    from models import StockData, StockMD
     global data
     filters = "mean_price_target_diff IS NOT NULL"
     if request.form:
@@ -40,7 +40,7 @@ def main():
         if n_min != '':
             filters += " AND n >= {}".format(n_min)
 
-    data = StockData.query.filter(filters)
+    data = db.session.query(StockData, StockMD).filter(StockData.symbol == StockMD.symbol).filter(filters)
     return render_template("index.html", stockdata=data)
 
 
